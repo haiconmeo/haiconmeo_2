@@ -87,7 +87,7 @@ const Meta: FunctionComponent<Props> = ({ tags }) => {
         {/* End of Twitter Display card */}
 
         <meta name="robots" content={`${tags.robots}`} />
-
+        <script src="https://messenger.svc.chative.io/static/v1.0/channels/s5872f568-fe3a-4896-8236-4a4a150699f8/messenger.js?mode=livechat" defer="defer"></script>
         {/* The URL of the canonical tags */}
         <link rel="canonical" key="canonical" href={tags.canonical} />
       </Head>

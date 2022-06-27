@@ -41,6 +41,8 @@
   "homepage": "https://github.com/techhiveIO/nextjs-static-boilerplate#readme",
   "pre-commit": "pretty-quick --staged",
   "dependencies": {
+    "@contentful/rich-text-react-renderer": "^15.12.1",
+    "@material-ui/core": "^4.12.4",
     "contentful": "~9.1.4",
     "dotenv": "~10.0.0",
     "dotenv-webpack": "^7.0.3",

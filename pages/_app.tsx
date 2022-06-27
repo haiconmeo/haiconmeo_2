@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Script from 'next/script';
-
+import { ThemeProvider } from "@material-ui/core/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
 import './styles.scss';
 import './home.scss';
 import { useRouter } from 'next/router';

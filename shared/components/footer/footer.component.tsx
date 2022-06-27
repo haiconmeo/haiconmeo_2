@@ -15,9 +15,9 @@ const Footer: FunctionComponent = () => {
           href="https://www.techhive.io"
           target="_blank"
         >
-          TechHive.IO
+          haiconmeo
         </a>
-        {' ' + year} - Version {pjson.version}
+       
       </span>
     </footer>
   );

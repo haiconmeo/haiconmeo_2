@@ -1,7 +1,7 @@
 import { createClient } from 'contentful';
 import { BlogPost } from '../interfaces/post';
 
-export const CONTENT_TYPE_BLOGPOST = 'blogPost';
+export const CONTENT_TYPE_BLOGPOST = 'haiconmeo';
 export const CONTENT_TYPE_PERSON = 'author';
 export const CONTENT_TYPE_TAGS = 'tag';
 
@@ -19,15 +19,16 @@ export class ContentfulService {
    * @param entries
    */
   private mapData(entries): BlogPost[] {
+
     return entries.map(({ sys, fields }: { sys: any; fields: any }) => ({
       id: sys.id,
       title: fields.title,
-      description: fields.description,
-      heroImage: fields.heroImage.fields.file.url,
+      description: fields.sub,
+      heroImage: fields.coverImage.fields.file.url,
       slug: fields.slug,
-      tags: fields.tags,
-      publishedAt: fields.publishDate
-        ? new Date(fields.publishDate)
+      //tags: fields.tags,
+      publishedAt: fields.date
+        ? new Date(fields.date)
         : new Date(sys.createdAt)
     }));
   }
@@ -43,14 +44,11 @@ export class ContentfulService {
    * Get all tags
    */
   async getAllTags() {
-    const content = await this.client.getEntries({
-      content_type: CONTENT_TYPE_TAGS
-    });
-
+    const content = await this.client.getTags();
     const tags = content.items.map(
-      ({ sys, fields }: { sys: any; fields: any }) => ({
+      ({ sys, name }: { sys: any; name: any }) => ({
         id: sys.id,
-        name: fields.name
+        name: name
       })
     );
 
@@ -61,23 +59,35 @@ export class ContentfulService {
     { limit, skip, tag }: { limit?: number; skip?: number; tag?: string } = {
       limit: 5,
       skip: 0,
-      tag: ''
+      tag: null
     }
   ) {
     try {
-      const contents = await this.client.getEntries({
-        include: 1,
-        limit,
-        skip,
-        order: 'fields.publishDate',
-        'fields.tags.sys.id': tag,
-        content_type: CONTENT_TYPE_BLOGPOST
-      });
+      let filter:any;
+      if (tag) {
+        filter = {
+          'metadata.tags.sys.id[in]': tag,
+          include: 1,
+          limit,
+          skip,
+          order: 'fields.date',
+          content_type: CONTENT_TYPE_BLOGPOST
+        }
+      }
+      else{
+        filter = {
+          include: 1,
+          limit,
+          skip,
+          order: 'fields.date',
+          content_type: CONTENT_TYPE_BLOGPOST
+        }
+      }
+      const contents = await this.client.getEntries(filter);
 
       const entries = this.mapData(contents.items);
 
       const total = contents.total;
-
       return { entries, total, limit, skip };
     } catch (error) {
       // TODO: add error handling
@@ -86,34 +96,15 @@ export class ContentfulService {
   }
 
   async getPostBySlug(slug) {
-    try {
-      const content: any = await this.fetchPostBySlug(slug);
-
-      const entry: { sys: any; fields: any } = content.items[0];
-
-      const author = {
-        name: entry.fields.author.fields.name,
-        title: entry.fields.author.fields.title,
-        company: entry.fields.author.fields.company,
-        shortBio: entry.fields.author.fields.shortBio
-      };
-
-      return {
-        id: entry.sys.id,
-        slug: entry.fields.slug,
-        body: entry.fields.body,
-        title: entry.fields.title,
-        description: entry.fields.description,
-        tags: entry.fields.tags,
-        heroImage: { url: entry.fields.heroImage.fields.file.url },
-        author: { ...author, id: entry.fields.author.sys.id },
-        publishedAt: entry.fields.publishDate
-          ? new Date(entry.fields.publishDate)
-          : new Date(entry.sys.createdAt)
-      };
-    } catch (error) {
-      console.error(error);
+    
+    const entries = await this.client.getEntries({
+      content_type: "haiconmeo",
+      limit: 1,
+      "fields.slug[in]": slug,
+    });    if (entries.items) {
+      return entries.items[0].fields;
     }
+    console.log(`Error getting Entries for `);
   }
 
   async fetchSuggestions(tags: string[], currentArticleSlug: string) {

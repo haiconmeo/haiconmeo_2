@@ -5,6 +5,7 @@ import styles from './header.module.scss';
 
 const Header: FunctionComponent = () => {
   return (
+    
     <div className={styles.nav}>
       <div className={styles.brand}>
         <Link href="/">
@@ -16,7 +17,7 @@ const Header: FunctionComponent = () => {
         </Link>
 
         <h3 className={styles.brand__name}>
-          TechHive.IO: NextJs Static Starter Kit.
+          Hai Con Meo
         </h3>
       </div>
     </div>

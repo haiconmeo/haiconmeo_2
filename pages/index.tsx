@@ -76,9 +76,7 @@ const IndexPage: NextPage<Props, any> = (props: Props) => {
 
 IndexPage.getInitialProps = async ({ query }) => {
   const contentfulService = new ContentfulService();
-  let page = 1;
-
-  if (query.page) {
+  let page = 1;  if (query.page) {
     page = parseInt(query.page + '');
   }
 
@@ -88,8 +86,6 @@ IndexPage.getInitialProps = async ({ query }) => {
       skip: (page - 1) * 3,
       limit: 3
     });
-
-  // TODO: need to move outside
   const { tags } = await contentfulService.getAllTags();
 
   return { page, tags, entries, total, skip, limit };
